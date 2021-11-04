@@ -4,6 +4,7 @@ import inspect
 import six
 import sys
 import textwrap
+from queue import Queue
 
 from fabric import state
 from fabric.utils import abort, warn, error
@@ -209,8 +210,7 @@ def _parallel_tasks(commands_to_run):
 def _is_network_error_ignored():
     return not state.env.use_exceptions_for['network'] and state.env.skip_bad_hosts
 
-
-def _execute(task, host, my_env, args, kwargs, jobs, queue, multiprocessing):
+def _execute(task, host, my_env, args, kwargs, jobs, queue, threading):
     """
     Primary single-host work body of execute()
     """
@@ -233,7 +233,8 @@ def _execute(task, host, my_env, args, kwargs, jobs, queue, multiprocessing):
         # * nukes the connection cache to prevent shared-access problems
         # * knows how to send the tasks' return value back over a Queue
         # * captures exceptions raised by the task
-        def inner(args, kwargs, queue, name, env):
+
+        def _inner(args, kwargs, queue, name, env):
             state.env.update(env)
             def submit(result):
                 queue.put({'name': name, 'result': result})
@@ -266,7 +267,7 @@ def _execute(task, host, my_env, args, kwargs, jobs, queue, multiprocessing):
             'name': name,
             'env': local_env,
         }
-        p = multiprocessing.Process(target=inner, kwargs=kwarg_dict)
+        p = threading.Thread(target=_inner, kwargs=kwarg_dict)
         # Name/id is host string
         p.name = name
         # Add to queue
@@ -357,22 +358,22 @@ def execute(task, *args, **kwargs):
         # Import multiprocessing if needed, erroring out usefully
         # if it can't.
         try:
-            import multiprocessing
+            import threading
         except ImportError:
             import traceback
             tb = traceback.format_exc()
             abort(tb + """
     At least one task needs to be run in parallel, but the
-    multiprocessing module cannot be imported (see above
+    threading module cannot be imported (see above
     traceback.) Please make sure the module is installed
     or that the above ImportError is fixed.""")
     else:
-        multiprocessing = None
+        threading = None
 
     # Get pool size for this task
     pool_size = task.get_pool_size(my_env['all_hosts'], state.env.pool_size)
     # Set up job queue in case parallel is needed
-    queue = multiprocessing.Queue() if parallel else None
+    queue = Queue() if parallel else None
     jobs = JobQueue(pool_size, queue)
     if state.output.debug:
         jobs._debug = True
@@ -384,7 +385,7 @@ def execute(task, *args, **kwargs):
             try:
                 results[host] = _execute(
                     task, host, my_env, args, new_kwargs, jobs, queue,
-                    multiprocessing
+                    threading
                 )
             except NetworkError as e:
                 results[host] = e

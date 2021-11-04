@@ -30,3 +30,6 @@ sites/*/_build
 /Makefile
 /venvs/
 /.eggs/
+.envrc
+.vscode
+.venv-*
