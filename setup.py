@@ -8,8 +8,8 @@ from fabric.version import get_version
 
 
 long_description = """
-Fabric3 is a fork of `Fabric <http://fabfile.org>`_ to provide compatability
-with Python 3.4+. The port still works with Python 2.7.
+Fabric39 is a fork of `Fabric 3 <https://github.com/mathiasertl/fabric>`_ to provide compatibility with Python3.9+. Fabric3 is a deprecated fork of `Fabric <http://fabfile.org>`_ to provide compatability
+with Python 2.7 and 3.4+. Here is the originaly description of Fabric 3:
 
 The goal is to stay 100% compatible with the original Fabric.  Any new releases
 of Fabric will also be released here.  Please file issues for any differences
@@ -26,15 +26,15 @@ install_requires=['paramiko>=2.0,<3.0', 'six>=1.10.0']
 
 
 setup(
-    name='Fabric3',
+    name='Fabric39',
     version=get_version('short'),
     description='Fabric is a simple, Pythonic tool for remote execution and deployment (py2.7/py3.4+ compatible fork).',
     long_description=long_description,
     author='Jeff Forcier',
     author_email='jeff@bitprophet.org',
-    maintainer='Mathias Ertl',
-    maintainer_email='mati@er.tl',
-    url='https://github.com/mathiasertl/fabric/',
+    maintainer='Brian Abelson',
+    maintainer_email='brian.abelson@parsely.com',
+    url='https://github.com/Parsely/fabric/',
     packages=find_packages(),
     test_suite='nose.collector',
     tests_require=['nose<2.0', 'fudge<1.0', 'jinja2<3.0'],
@@ -59,6 +59,7 @@ setup(
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.9',
           'Topic :: Software Development',
           'Topic :: Software Development :: Build Tools',
           'Topic :: Software Development :: Libraries',
