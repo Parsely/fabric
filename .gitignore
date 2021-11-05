@@ -33,3 +33,4 @@ sites/*/_build
 .envrc
 .vscode
 .venv-*
+*.egg-info
