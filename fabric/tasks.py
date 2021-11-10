@@ -4,7 +4,6 @@ import inspect
 import six
 import sys
 import textwrap
-from queue import Queue
 
 from fabric import state
 from fabric.utils import abort, warn, error
@@ -210,7 +209,7 @@ def _parallel_tasks(commands_to_run):
 def _is_network_error_ignored():
     return not state.env.use_exceptions_for['network'] and state.env.skip_bad_hosts
 
-def _execute(task, host, my_env, args, kwargs, jobs, queue, threading):
+def _execute(task, host, my_env, args, kwargs, jobs, queue, multiprocessing):
     """
     Primary single-host work body of execute()
     """
@@ -267,7 +266,7 @@ def _execute(task, host, my_env, args, kwargs, jobs, queue, threading):
             'name': name,
             'env': local_env,
         }
-        p = threading.Thread(target=_inner, kwargs=kwarg_dict)
+        p = multiprocessing.Process(target=_inner, kwargs=kwarg_dict)
         # Name/id is host string
         p.name = name
         # Add to queue
@@ -358,22 +357,22 @@ def execute(task, *args, **kwargs):
         # Import multiprocessing if needed, erroring out usefully
         # if it can't.
         try:
-            import threading
+            from pathos.helpers import mp as multiprocessing
         except ImportError:
             import traceback
             tb = traceback.format_exc()
             abort(tb + """
     At least one task needs to be run in parallel, but the
-    threading module cannot be imported (see above
+    pathos.helpers.mp module cannot be imported (see above
     traceback.) Please make sure the module is installed
     or that the above ImportError is fixed.""")
     else:
-        threading = None
+        multiprocessing = None
 
     # Get pool size for this task
     pool_size = task.get_pool_size(my_env['all_hosts'], state.env.pool_size)
     # Set up job queue in case parallel is needed
-    queue = Queue() if parallel else None
+    queue = multiprocessing.Queue() if parallel else None
     jobs = JobQueue(pool_size, queue)
     if state.output.debug:
         jobs._debug = True
@@ -385,7 +384,7 @@ def execute(task, *args, **kwargs):
             try:
                 results[host] = _execute(
                     task, host, my_env, args, new_kwargs, jobs, queue,
-                    threading
+                    multiprocessing
                 )
             except NetworkError as e:
                 results[host] = e

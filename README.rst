@@ -1,7 +1,7 @@
 `Fabric39` - a Python3.9-compatible fork of `Fabric3`
 =============
 
-This is a fork of `Fabric3 <https://github.com/mathiasertl/fabric/tree/master/fabric>`_ which originally existed to add Python3 support to Fabric 1.X. Mainline Fabric 2.X now supports Python3, but has a divergent API from Fabric 1.X (and Fabric3, as well). The only change to this fork `is switching from multiprocessing to threading for parallel execution of tasks <https://github.com/Parsely/fabric/pull/1>`_, which suppresses pickling errors. Below is the original README of Fabric3:
+This is a fork of `Fabric3 <https://github.com/mathiasertl/fabric/tree/master/fabric>`_ which originally existed to add Python3 support to Fabric 1.X. Mainline Fabric 2.X now supports Python3, but has a divergent API from Fabric 1.X (and Fabric3, as well). The only change to this fork `is switching from built-in multiprocessing to pathos for parallel execution of tasks <https://github.com/uqfoundation/pathos/>`_, which suppresses pickling errors. Below is the original README of Fabric3:
 
 # Fabric3
 

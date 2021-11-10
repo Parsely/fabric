@@ -8,3 +8,4 @@
 # Pull in actual "you already have local installed checkouts of Fabric +
 # Paramiko" dev deps.
 -r dev-requirements.txt
+pathos==0.2.8

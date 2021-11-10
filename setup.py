@@ -22,8 +22,7 @@ To find out what's new in this version of Fabric, please see `the changelog
 For more information, please see the Fabric website or execute ``fab --help``.
 """
 
-install_requires=['paramiko>=2.0,<3.0', 'six>=1.10.0']
-
+install_requires=['paramiko>=2.0,<3.0', 'six>=1.10.0', 'pathos==0.2.8']
 
 setup(
     name='Fabric39',
