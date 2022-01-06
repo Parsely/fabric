@@ -411,7 +411,7 @@ def execute(task, *args, **kwargs):
             # Otherwise, pull in results from the child run.
             ran_jobs = jobs.run()
             for name, d in six.iteritems(ran_jobs):
-                if d['exit_code'] != 0:
+                if d['exit_code'] not in (0, None):
                     if isinstance(d['results'], NetworkError) and \
                             _is_network_error_ignored():
                         error(d['results'].message, func=warn, exception=d['results'].wrapped)
