@@ -411,14 +411,12 @@ def execute(task, *args, **kwargs):
             # Otherwise, pull in results from the child run.
             ran_jobs = jobs.run()
             for name, d in six.iteritems(ran_jobs):
-                if d['exit_code'] is not None and d['exit_code'] != 0:
+                if isinstance(d["results"], BaseException):
                     if isinstance(d['results'], NetworkError) and \
                             _is_network_error_ignored():
                         error(d['results'].message, func=warn, exception=d['results'].wrapped)
-                    elif isinstance(d['results'], BaseException):
-                        error(err, exception=d['results'])
                     else:
-                        error(err)
+                        error(err, exception=d['results'])
                 results[name] = d['results']
 
     # Or just run once for local-only
