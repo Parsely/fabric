@@ -9,17 +9,17 @@ from subprocess import Popen, PIPE
 from os.path import abspath, dirname
 
 
-VERSION = (1, 15, 2, 'post', 1)
+VERSION = (1, 15, 3, "post", 1)
 
 
 def git_sha():
     loc = abspath(dirname(__file__))
     try:
         p = Popen(
-            "cd \"%s\" && git log -1 --format=format:%%h" % loc,
+            'cd "%s" && git log -1 --format=format:%%h' % loc,
             shell=True,
             stdout=PIPE,
-            stderr=PIPE
+            stderr=PIPE,
         )
         return p.communicate()[0]
     # OSError occurs on Unix-derived platforms lacking Popen's configured shell
@@ -28,7 +28,7 @@ def git_sha():
         return None
 
 
-def get_version(form='short'):
+def get_version(form="short"):
     """
     Return a version string for this package, based on `VERSION`.
 
@@ -50,25 +50,25 @@ def get_version(form='short'):
     branch = "%s.%s" % (VERSION[0], VERSION[1])
     tertiary = VERSION[2]
     type_ = VERSION[3]
-    final = (type_ == "final")
-    post = (type_ == "post")
+    final = type_ == "final"
+    post = type_ == "post"
     type_num = VERSION[4]
     firsts = "".join([x[0] for x in type_.split()])
 
     # Branch
-    versions['branch'] = branch
+    versions["branch"] = branch
 
     # Short
     v = branch
-    if (tertiary or final):
+    if tertiary or final:
         v += "." + str(tertiary)
     if post:
-        v += '.%s%s' % (type_, type_num)
+        v += ".%s%s" % (type_, type_num)
     elif not final:
         v += firsts
         if type_num:
             v += str(type_num)
-    versions['short'] = v
+    versions["short"] = v
 
     # Normal
     v = branch
@@ -79,7 +79,7 @@ def get_version(form='short'):
             v += " " + type_ + " " + str(type_num)
         else:
             v += " pre-" + type_
-    versions['normal'] = v
+    versions["normal"] = v
 
     # Verbose
     v = branch
@@ -92,16 +92,17 @@ def get_version(form='short'):
             v += " pre-" + type_
     else:
         v += " final"
-    versions['verbose'] = v
+    versions["verbose"] = v
 
     try:
         return versions[form]
     except KeyError:
-        if form == 'all':
+        if form == "all":
             return versions
         raise TypeError('"%s" is not a valid form specifier.' % form)
 
-__version__ = get_version('short')
+
+__version__ = get_version("short")
 
 if __name__ == "__main__":
-    print(get_version('all'))
+    print(get_version("all"))
