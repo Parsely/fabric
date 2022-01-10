@@ -415,8 +415,10 @@ def execute(task, *args, **kwargs):
                     if isinstance(d['results'], NetworkError) and \
                             _is_network_error_ignored():
                         error(d['results'].message, func=warn, exception=d['results'].wrapped)
-                    else:
+                    elif isinstance(d['results'], BaseException):
                         error(err, exception=d['results'])
+                    else:
+                        error(err)
                 results[name] = d['results']
 
     # Or just run once for local-only
