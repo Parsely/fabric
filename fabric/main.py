@@ -9,7 +9,6 @@ The other callables defined in this module are internal only. Anything useful
 to individuals leveraging Fabric as a library, should be kept elsewhere.
 """
 import getpass
-from collections import Mapping
 import inspect
 from optparse import OptionParser
 import os
@@ -27,6 +26,12 @@ from fabric.state import env_options
 from fabric.tasks import Task, execute, get_task_details
 from fabric.task_utils import _Dict, crawl
 from fabric.utils import abort, indent, warn, _pty_size
+
+
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 
 try:
     reduce
